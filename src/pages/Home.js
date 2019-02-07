@@ -76,6 +76,8 @@ export default class Home extends Component {
             <Text style={styles.fontStatus}>existem 4 notificações de eventos pendentes</Text>
         </Animated.View>
 
+
+
         {this.state.enableForm && <Form opacityContent={this.state.opacityContent}></Form>}
 
       </View>

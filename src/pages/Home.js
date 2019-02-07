@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, Text, StyleSheet, Animated, TouchableNativeFeedback, BackHandler, StatusBar } from 'react-native'
+import { View, Text, StyleSheet, Animated, TouchableNativeFeedback, BackHandler, StatusBar, ToastAndroid } from 'react-native'
 import { fontColor } from '../utils/shared'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import Form from '../components/Form'
@@ -16,7 +16,6 @@ export default class Home extends Component {
     hidden: new Animated.Value(1),
     show: new Animated.Value(0),
     
-    
     widthButton: new Animated.Value(140),
     
     positionBuyOption: new Animated.Value(200),
@@ -28,24 +27,40 @@ export default class Home extends Component {
     showRevenueOption: new Animated.Value(0),
 
     enableForm: false,
+
+    currentPage: 'Home'
   }
 
   state = {...this.initialState}
 
   componentDidMount() {
     BackHandler.addEventListener('hardwareBackPress', () => {
-      this.goBack()
-      return true
+       this.goBack()
+       return true
     }) 
   }
+  
 
   goBack() {
-    Animated.timing(this.state.fontSizeLogo, { toValue: 36, duration: 500 }).start()
-    Animated.timing(this.state.widthButton, { toValue: 150, duration: 500}).start()
-    Animated.timing(this.state.logoPositionTop, { toValue: 280, duration: 500}).start()
-    Animated.timing(this.state.hidden, { toValue: 1, duration: 200}).start()
-    Animated.timing(this.state.show, { toValue: 0, duration: 100}).start()
+    Animated.parallel([
+      Animated.timing(this.state.fontSizeLogo, { toValue: 36, duration: 500 }).start(),
+      Animated.timing(this.state.widthButton, { toValue: 150, duration: 500 }).start(),
+      Animated.timing(this.state.logoPositionTop, { toValue: 280, duration: 500}).start(),
+      Animated.timing(this.state.hidden, { toValue: 1, duration: 500}).start(),
+      Animated.timing(this.state.show, { toValue: 0, duration: 100}).start(),
+    ])
     this._handleDisableOption()
+  }
+
+  _hiddenButton() {
+    Animated.timing(this.state.widthButton, { toValue: 350, duration: 500}).start()
+    Animated.timing(this.state.logoPositionTop, { toValue: 30, duration: 500}).start()
+    Animated.timing(this.state.fontSizeLogo, { toValue: 24, duration: 500 })
+      .start(data => data.finished ? this.setState({enableForm: true}) : null)
+    Animated.timing(this.state.hidden, { toValue: 0, duration: 200}).start(data => {
+      if (data.finished) {
+        Animated.timing(this.state.show, { toValue: 1, duration: 500}).start()
+      }})
   }
 
   _handleDisableOption() {
@@ -79,16 +94,7 @@ export default class Home extends Component {
     this._hiddenButton()
   }
 
-  _hiddenButton() {
-    Animated.timing(this.state.widthButton, { toValue: 350, duration: 500}).start()
-    Animated.timing(this.state.logoPositionTop, { toValue: 30, duration: 500}).start()
-    Animated.timing(this.state.fontSizeLogo, { toValue: 24, duration: 500 })
-      .start(data => data.finished ? this.setState({enableForm: true}) : null)
-    Animated.timing(this.state.hidden, { toValue: 0, duration: 200}).start(data => {
-      if (data.finished) {
-        Animated.timing(this.state.show, { toValue: 1, duration: 500}).start()
-      }})
-  }
+  
 
   
 
@@ -116,13 +122,15 @@ export default class Home extends Component {
 
         <Animated.View style={[styles.bottomBar, { opacity: this.state.hidden }]}></Animated.View>
         <Animated.View style={[styles.status, { opacity: this.state.hidden }]}>
-            <Text style={styles.fontStatus}>existem 4 notificações de eventos pendentes</Text>
+          <Text style={styles.fontStatus}>existem 4 notificações de eventos pendentes</Text>
         </Animated.View>
 
         {this.state.enableForm && 
           <View style={[styles.options]}>
-            <Animated.Text style={[styles.optionsBuy, 
-              { opacity: this.state.showBuyOption, top: this.state.positionBuyOption } ]}>Compra</Animated.Text>
+            <TouchableNativeFeedback onPress={() => this.props.navigation.navigate('Register')}>
+              <Animated.Text style={[styles.optionsBuy, 
+                { opacity: this.state.showBuyOption, top: this.state.positionBuyOption } ]}>Compra</Animated.Text>
+            </TouchableNativeFeedback>
             <Animated.Text style={[styles.optionsBuy, 
               { opacity: this.state.showBillOption, top: this.state.positionBillOption } ]}>Pagamento</Animated.Text>
             <Animated.Text style={[styles.optionsBuy, 
@@ -183,6 +191,8 @@ const styles = StyleSheet.create({
     borderRadius: 5
   },
   status: {
+    flexDirection: 'row',
+    alignItems: 'center',
     position: 'absolute',
     bottom: 20
   },
@@ -204,7 +214,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     height: '80%',
     width: '90%',
-    // borderWidth: 0.5,
   },
   year: {
     fontFamily: 'sans-serif-light',
@@ -214,7 +223,8 @@ const styles = StyleSheet.create({
   month: {
     fontFamily: 'sans-serif-light',
     fontSize: 14,
-    color: fontColor
+    color: fontColor,
+    padding: 10
   },
   choiceMonth: {
     alignItems: 'center',
@@ -224,6 +234,5 @@ const styles = StyleSheet.create({
     fontFamily: 'sans-serif-light',
     fontSize: 48,
     position: 'absolute'
-  },
-  
+  }
 })

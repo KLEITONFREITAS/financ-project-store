@@ -7,13 +7,11 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 export default class Form extends Component {
   
   state = {
-    firstQuestion: new Animated.Value(0),
-    secondQuestion: new Animated.Value(350),
+    
   }
 
   _handleSelectSecondQuestion() {
-    Animated.timing(this.state.firstQuestion, {toValue: -400, duration: 200}).start()
-    Animated.timing(this.state.secondQuestion, {toValue: 0, duration: 200}).start()
+    
   }
 
 
@@ -21,22 +19,22 @@ export default class Form extends Component {
     return (
       <Animated.View style={[styles.content, { opacity: this.props.opacityContent }]}>
         
-        <Animated.View style={[styles.second, { left: this.state.firstQuestion }]}>
+        <Animated.View style={[styles.second]}>
           <Text style={styles.labelField}>Título.</Text>
           <Text style={styles.descField}>qual a descrição deste registro?</Text>
           <View style={styles.inputField}>
             <TextInput style={styles.field} underlineColorAndroid={'transparent'} autoFocus={true}></TextInput>
           </View>
-        </Animated.View>
-        
-        
-        <Animated.View style={[styles.second, { left: this.state.secondQuestion }]}>
+
           <Text style={styles.labelField}>Valor.</Text>
           <Text style={styles.descField}>qual o valor deste registro?</Text>
           <View style={styles.inputField}>
-            <TextInput style={styles.field} underlineColorAndroid={'transparent'} autoFocus={true}></TextInput>
+            <TextInput style={styles.field} underlineColorAndroid={'transparent'} ></TextInput>
           </View>
         </Animated.View>
+        
+        
+        
 
         
         <TouchableNativeFeedback onPress={() => this._handleSelectSecondQuestion()}>

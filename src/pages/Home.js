@@ -1,10 +1,12 @@
 import React, { Component } from 'react'
-import { View, Text, StyleSheet, Animated, TouchableNativeFeedback, BackHandler, StatusBar, ToastAndroid } from 'react-native'
+import { View, Text, StyleSheet, Animated, TouchableWithoutFeedback, BackHandler, StatusBar, ToastAndroid } from 'react-native'
 import { fontColor } from '../utils/shared'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import Form from '../components/Form'
 
 export default class Home extends Component {
+
+  
 
   static navigationOptions = {
     header: null
@@ -28,7 +30,6 @@ export default class Home extends Component {
 
     enableForm: false,
 
-    currentPage: 'Home'
   }
 
   state = {...this.initialState}
@@ -99,24 +100,25 @@ export default class Home extends Component {
   
 
   render() {
-    return (
+
+     return (
       <View style={styles.container}>
         <StatusBar translucent={true} backgroundColor={'transparent'} barStyle="dark-content" />
 
         <Animated.Text style={[styles.logo, { fontSize: this.state.fontSizeLogo, top: this.state.logoPositionTop }]}>store.</Animated.Text>
 
-        <TouchableNativeFeedback onPress={() => this._handleEnableOption()}>
+        <TouchableWithoutFeedback onPress={() => this._handleEnableOption()}>
           <Animated.View style={[styles.button, { width: this.state.widthButton, opacity: this.state.hidden,  }]}>
               <Text style={styles.labelButton}>registre</Text>
               <Icon name={'arrow-right'} size={14} color={'#fff'}></Icon>
           </Animated.View>
-        </TouchableNativeFeedback>
+        </TouchableWithoutFeedback>
 
         <Animated.View style={[styles.arrows, { opacity: this.state.hidden }]}>
           <Icon name={'chevron-left'} size={20} color={fontColor}></Icon>
-            <TouchableNativeFeedback onPress={() => this._handleRegister()}>
+            <TouchableWithoutFeedback onPress={() => this._handleRegister()}>
               <Text style={styles.month}>FEVEREIRO / 19</Text>
-            </TouchableNativeFeedback>
+            </TouchableWithoutFeedback>
           <Icon name={'chevron-right'} size={20} color={fontColor}></Icon>
         </Animated.View>
 
@@ -127,14 +129,23 @@ export default class Home extends Component {
 
         {this.state.enableForm && 
           <View style={[styles.options]}>
-            <TouchableNativeFeedback onPress={() => this.props.navigation.navigate('Register')}>
-              <Animated.Text style={[styles.optionsBuy, 
-                { opacity: this.state.showBuyOption, top: this.state.positionBuyOption } ]}>Compra</Animated.Text>
-            </TouchableNativeFeedback>
-            <Animated.Text style={[styles.optionsBuy, 
-              { opacity: this.state.showBillOption, top: this.state.positionBillOption } ]}>Pagamento</Animated.Text>
-            <Animated.Text style={[styles.optionsBuy, 
-              { opacity: this.state.showRevenueOption, top: this.state.positionRevenueOption } ]}>Receita</Animated.Text>
+            <TouchableWithoutFeedback onPress={() => this.props.navigation.navigate('Register', { type: 'compra' })}>
+              <Animated.Text style={[styles.buttonOption, { opacity: this.state.showBuyOption, top: this.state.positionBuyOption } ]}>
+                <Text style={styles.fontButtonOption}>Compra</Text>
+              </Animated.Text>
+            </TouchableWithoutFeedback>
+
+            <TouchableWithoutFeedback onPress={() => this.props.navigation.navigate('Register', { type: 'pagamento' })}>
+              <Animated.View style={[styles.buttonOption, { opacity: this.state.showBillOption, top: this.state.positionBillOption } ]}>
+                <Text style={styles.fontButtonOption}>Pagamento</Text>
+              </Animated.View>
+            </TouchableWithoutFeedback>
+
+            <TouchableWithoutFeedback onPress={() => this.props.navigation.navigate('Register', { type: 'receita' })}>
+              <Animated.View style={[styles.buttonOption, { opacity: this.state.showRevenueOption, top: this.state.positionRevenueOption } ]}>
+                <Text style={styles.fontButtonOption}>Receita</Text>
+              </Animated.View>
+            </TouchableWithoutFeedback>
           </View>
         }
         
@@ -230,9 +241,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center'
   },
-  optionsBuy: {
+  buttonOption: {
+    position: 'absolute',
+    borderWidth: 0.5
+  },
+  fontButtonOption: {
     fontFamily: 'sans-serif-light',
     fontSize: 48,
-    position: 'absolute'
   }
 })

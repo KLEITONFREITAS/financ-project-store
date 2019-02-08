@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, Text, StyleSheet, Animated, TouchableWithoutFeedback, BackHandler, StatusBar, ToastAndroid } from 'react-native'
+import { View, Text, StyleSheet, Animated, TouchableWithoutFeedback, TouchableOpacity, BackHandler, StatusBar, ToastAndroid } from 'react-native'
 import { fontColor } from '../utils/shared'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import Form from '../components/Form'
@@ -28,7 +28,7 @@ export default class Home extends Component {
     showBillOption: new Animated.Value(0),
     showRevenueOption: new Animated.Value(0),
 
-    enableForm: false,
+    enableList: false,
 
   }
 
@@ -51,6 +51,7 @@ export default class Home extends Component {
       Animated.timing(this.state.show, { toValue: 0, duration: 100}).start(),
     ])
     this._handleDisableOption()
+    this.setState({ enableList: false })
   }
 
   _hiddenButton() {
@@ -87,12 +88,12 @@ export default class Home extends Component {
       Animated.timing(this.state.showBuyOption, { toValue: 1, duration: 1000}).start(),
       Animated.timing(this.state.showBillOption, { toValue: 1, duration: 1000, delay: 300}).start(),
       Animated.timing(this.state.showRevenueOption, { toValue: 1, duration: 1000, delay: 800}).start()
-      
     ])
   }
 
   _handleRegister() {
     this._hiddenButton()
+    this.setState({ enableList: true })
   }
 
   
@@ -141,7 +142,8 @@ export default class Home extends Component {
               </Animated.View>
             </TouchableWithoutFeedback>
 
-            <TouchableWithoutFeedback onPress={() => this.props.navigation.navigate('Register', { type: 'receita' })}>
+            <TouchableWithoutFeedback 
+              onPress={() => this.props.navigation.navigate('Register', { type: 'receita' })}>
               <Animated.View style={[styles.buttonOption, { opacity: this.state.showRevenueOption, top: this.state.positionRevenueOption } ]}>
                 <Text style={styles.fontButtonOption}>Receita</Text>
               </Animated.View>
@@ -149,9 +151,23 @@ export default class Home extends Component {
           </View>
         }
         
+        { this.state.enableList && 
+          <View style={styles.financArea}>
+          <View style={[styles.descFinanc, styles.descFinancType1]}>
+            <Text style={styles.financLabel}>Nubank</Text>
+            <Text style={styles.financLabel}>R$ 1058,33</Text>
+          </View>
+          <View style={[styles.descFinanc, styles.descFinancType2]}>
+            <View>
+              <Text style={[styles.financLabel, styles.financLabelType2]}>Nubank</Text>
+              <Text style={[styles.financLabel, styles.financLabelType2]}>Alimentação</Text>
+            </View>
+            <Text style={[styles.financLabel, styles.financLabelType2]}>R$ 1058,33</Text>
+          </View>
+        </View>
+        }
 
-
-        {/* {this.state.enableForm && <Form opacityContent={this.state.opacityContent}></Form>} */}
+        
 
       </View>
     )
@@ -180,7 +196,7 @@ const styles = StyleSheet.create({
     height: 40,
     // width: 140,
     borderRadius: 20,
-    borderWidth: 0.5,
+    // borderWidth: 0.5,
     backgroundColor: '#000',
     // borderColor: '#fff',
     zIndex: 2
@@ -243,10 +259,43 @@ const styles = StyleSheet.create({
   },
   buttonOption: {
     position: 'absolute',
-    borderWidth: 0.5
+    // borderWidth: 0.5
   },
   fontButtonOption: {
     fontFamily: 'sans-serif-light',
     fontSize: 48,
-  }
+  },
+
+
+
+
+  financArea: {
+    flex: 1,
+    marginLeft: 40,
+  },
+  descFinanc: {
+    flexWrap: 'wrap',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    padding: 10,
+    marginBottom: 10,
+    borderRadius: 10
+  },
+  descFinancType1: {
+    marginRight: 65,
+    backgroundColor: '#355434'
+  },
+  descFinancType2: {
+    marginRight: 20,
+    backgroundColor: '#B3A525'
+  },
+  financLabel: {
+    fontFamily: 'sans-serif-light',
+    color: fontColor,
+    fontSize: 16,
+  },
+
+
+
 })

@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, TextInput, StyleSheet, StatusBar, BackHandler, TouchableNativeFeedback } from 'react-native'
+import { View, TextInput, StyleSheet, StatusBar, Text, TouchableNativeFeedback } from 'react-native'
 import { fontColor, backgroundColor } from '../utils/shared'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
@@ -14,8 +14,11 @@ export default class Register extends Component {
     headerTintColor: '#000',
   }
 
-  _handleSelectSecondQuestion() {
+  exemplos = [{ desc: 'Celpe' }, { desc: 'Nubank' }, { desc: 'Master' }]
 
+
+  state = {
+    desc: ''
   }
 
   render() {
@@ -28,12 +31,18 @@ export default class Register extends Component {
 
         <StatusBar translucent={true} backgroundColor={'transparent'} barStyle="dark-content" />
 
-        <TextInput style={styles.input} placeholder={`Como você deseja chamar esta ${type}?`}></TextInput>
+        <TextInput style={styles.input} placeholder={`Como você deseja chamar esta ${type}?`} value={this.state.desc} onChangeText={text => this.setState({desc: text})}></TextInput>
 
         <TouchableNativeFeedback onPress={() => this._handleSelectSecondQuestion()}>
           <View style={styles.buttonNext}>
             {/* <Icon name={'arrow-right'} size={30} color={backgroundColor}></Icon> */}
-            <Icon name={'microphone'} size={22} color={backgroundColor} />
+            { !this.state.desc ? 
+            <Icon name={'microphone'} size={22} color={backgroundColor} /> :
+            <TouchableNativeFeedback onPress={() => this.props.navigation.navigate('Home')}>
+              <Icon name={'arrow-right'} size={22} color={backgroundColor} />
+            </TouchableNativeFeedback>
+             }
+            
           </View>
         </TouchableNativeFeedback>
       </View>
@@ -48,12 +57,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center'
   },
-  input: {
-    fontSize: 18,
 
-    padding: 10,
-    borderBottomWidth: 2,
-    borderBottomColor: 'green'
+  input: {
+    position: 'absolute',
+    left: 60,
+    fontSize: 18,
+    fontFamily: 'sans-serif-light',
+    borderBottomWidth: 1,
+    borderBottomColor: 'green',
+
   },
   buttonNext: {
     position: 'absolute',

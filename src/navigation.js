@@ -1,14 +1,12 @@
 import { createStackNavigator, createAppContainer } from 'react-navigation'
 import { backgroundColor } from './utils/shared'
 
-import Home from './pages/Home'
-import Register from './pages/Register'
+import Main from './pages/Main'
 
 const Routes = createStackNavigator({
-    Home,
-    Register
+  Main,
 },{
-    cardStyle: { backgroundColor }
+  cardStyle: { backgroundColor }
 })
 
 export default createAppContainer(Routes)

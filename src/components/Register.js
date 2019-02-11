@@ -1,7 +1,10 @@
 import React, { Component } from 'react'
-import { Text, View, TextInput, TouchableWithoutFeedback, StyleSheet  } from 'react-native'
+import { Text, View, TextInput, TouchableWithoutFeedback, StyleSheet } from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
-import { backgroundColor, fontColor } from '../utils/shared'
+import { backgroundColor, fontColor, label } from '../utils/shared'
+import Keyboard from '../components/Keyboard'
+
+
 
 export default class Register extends Component {
 
@@ -52,17 +55,6 @@ export default class Register extends Component {
     return value
   }
 
-  showVirtualKeyboard() {
-    return (
-      <View style={styles.keyboard}>
-        <TouchableWithoutFeedback onPress={() => this.keyboardValueTouch(1)}>
-          <Text>1</Text>
-        </TouchableWithoutFeedback>
-      </View>
-    )
-  }
-
-
   render() {
       return (
         <View style={styles.register}>
@@ -71,21 +63,25 @@ export default class Register extends Component {
             <Icon style={styles.close} name={'window-close'} size={22} color={'#000'}/>
           </TouchableWithoutFeedback>
 
-          {this.state.firstQuestion && 
+          {this.state.firstQuestion &&
+          <View style={styles.firstQuestion}>
+            <Text style={styles.labelDesc}>{label.desc}</Text> 
             <TextInput style={styles.input} 
-              placeholder={`Como você deseja chamar esta ${this.props.type}?`} 
-              value={this.state.desc} 
+              placeholder={'descrição'} 
+              value={this.state.desc}
+              autoFocus={true}
               onChangeText={desc => this.setState({ desc })}>
             </TextInput>
+          </View>
           }
 
           {this.state.secondQuestion && 
           this.showInputValue()
           }
 
-          {this.state.showVirtualKeyboard && 
-          this.showVirtualKeyboard()}
+          {this.state.showVirtualKeyboard && <Keyboard></Keyboard>}
   
+          {!this.state.showVirtualKeyboard && 
           <TouchableWithoutFeedback onPress={() => this.handleSelectSecondQuestion()}>
             <View style={styles.buttonNext}>
               { !this.state.desc ? 
@@ -94,6 +90,8 @@ export default class Register extends Component {
               }
             </View>
           </TouchableWithoutFeedback>
+          }
+
         </View>
       )
   }
@@ -105,14 +103,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     height: '100%',
-    // zIndex: 3
+  },
+  labelDesc: {
+    fontSize: 16,
+    fontWeight: 'bold'
+  },
+  firstQuestion: {
+    width: '90%'
   },
   input: {
-    // position: 'absolute',
-    fontSize: 18,
+    marginTop: 30,
+    textAlign: 'center',
+    fontSize: 22,
     fontFamily: 'sans-serif-light',
-    borderBottomWidth: 1,
-    borderBottomColor: 'green',
   },
   buttonNext: {
     position: 'absolute',
@@ -149,12 +152,5 @@ const styles = StyleSheet.create({
     left: 20,
     fontFamily: 'sans-serif-light',
     fontSize: 64,
-  },
-  keyboard: {
-    position: 'absolute',
-    bottom: 0,
-    width: '100%',
-    height: '50%',
-    backgroundColor: 'orange'
   }
 })

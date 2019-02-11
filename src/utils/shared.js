@@ -12,3 +12,8 @@ export const position = {
   billLast: 300,
   revenueLast: 360
 }
+
+
+export const label = {
+  desc: 'Preencha como você deseja identificar essa compra, nome do estabelecimento, tipo de gasto ou qualquer outra forma.'
+}

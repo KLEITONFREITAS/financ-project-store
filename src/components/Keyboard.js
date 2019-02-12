@@ -67,7 +67,7 @@ export default class Keyboard extends Component {
             <Icon name={'backspace'} size={32} color={'#000'} />
           </View>
         </TouchableWithoutFeedback>
-        <TouchableWithoutFeedback onPress={() => this.props.handleReturnKeyPress(1)}>
+        <TouchableWithoutFeedback onPress={() => this.props.handleReturnKeyPress('ok')}>
         <View style={styles.key}>
             <Text style={styles.fontKey}>Ok</Text>
           </View>

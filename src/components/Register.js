@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Text, View, TextInput, TouchableWithoutFeedback, StyleSheet } from 'react-native'
+import { Text, View, TextInput, TouchableWithoutFeedback, StyleSheet, Animated } from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { backgroundColor, fontColor, label } from '../utils/shared'
 import Keyboard from '../components/Keyboard'
@@ -13,22 +13,34 @@ export default class Register extends Component {
     secondQuestion: false,
     showVirtualKeyboard: false,
     desc: '',
-    value: 0
+    value: 0,
+    positionDesc: new Animated.Value(0)
   }
 
   handleSelectSecondQuestion() {
     this.setState({firstQuestion: false, secondQuestion: true, showVirtualKeyboard: true })
+    this.animationDescription()
   }
 
-  setValue(value) {
-    this.setState({value : this.convertInputToCurrency(value = this.keyboardValueTouch(
+  animationDescription() {
+    Animated.timing(this.state.positionDesc, {toValue: 1, duration: 1000}).start()
+  }
 
-      
-    ))})
+  handleReturnKeyPress(value) {
+    // console.log(value)
+    if (value == 'backspace') {
+      value = Array.from(this.state.value)
+      this.setState({value: value.pop()})
+    } else {
+      value = this.state.value + value
+    }
+    this.setState({value : this.convertInputToCurrency(value.toString())})
   }
 
   convertInputToCurrency = value => {
+    console.log(value)
     value = Array.from(value)
+    console.log(value)
     value = value.filter(char => char !== ',')
     
     if (value.length == 2) {
@@ -39,16 +51,9 @@ export default class Register extends Component {
         value.splice(value.length - 2, 0, ",")  
       }
     }
-    return value.join('')
-  }
 
-  showInputValue() {
-    return (
-      <View style={styles.valueArea}>
-        <Text style={styles.labelValue}>Qual o valor?</Text>
-        <Text style={styles.inputValue}>{this.state.value}</Text>
-      </View>
-    )
+    console.log(value)
+    return value.join('')
   }
 
   keyboardValueTouch(value) {
@@ -75,11 +80,18 @@ export default class Register extends Component {
           </View>
           }
 
+          {/* Segunda questão */}
+
           {this.state.secondQuestion && 
-          this.showInputValue()
+            <View style={styles.valueArea}>
+              <Text style={styles.labelValue}>VALOR</Text>
+              <Text style={styles.inputValue}><Text style={styles.currency}>$</Text>{this.state.value}</Text>
+              <Text>descrição</Text>
+              <Animated.Text style={[styles.desc, { opacity: this.state.positionDesc }]}>{this.state.desc}</Animated.Text>
+            </View>
           }
 
-          {this.state.showVirtualKeyboard && <Keyboard></Keyboard>}
+          {this.state.showVirtualKeyboard && <Keyboard handleReturnKeyPress={this.handleReturnKeyPress.bind(this)}></Keyboard>}
   
           {!this.state.showVirtualKeyboard && 
           <TouchableWithoutFeedback onPress={() => this.handleSelectSecondQuestion()}>
@@ -108,6 +120,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold'
   },
+  desc: {
+    fontSize: 18
+  },
   firstQuestion: {
     width: '90%'
   },
@@ -135,22 +150,21 @@ const styles = StyleSheet.create({
   },
   valueArea: {
     position: 'absolute',
-    height: '50%',
-    width: '100%',
     top: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '60%',
+    width: '100%',
   },
   labelValue: {
-    position: 'absolute',
-    top: 180,
-    left: 20,
     fontFamily: 'sans-serif-light',
-    fontSize: 32,
+    fontSize: 22,
   },
   inputValue: {
-    position: 'absolute',
-    top: 250,
-    left: 20,
     fontFamily: 'sans-serif-light',
     fontSize: 64,
+  },
+  currency: {
+    fontSize: 32
   }
 })

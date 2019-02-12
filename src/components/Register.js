@@ -8,6 +8,8 @@ import Keyboard from '../components/Keyboard'
 
 export default class Register extends Component {
 
+  lastDay = null
+
   state = {
     firstQuestion: true,
     secondQuestion: false,
@@ -15,8 +17,17 @@ export default class Register extends Component {
     showVirtualKeyboard: false,
     desc: '',
     value: 0,
-    positionDesc: new Animated.Value(0)
+    positionDesc: new Animated.Value(0),
+    due: '',
+    due0: null,
+    due1: null
+    
   }
+
+  componentDidMount() {
+    const today = new Date()
+    this.lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0)
+  }  
 
   handleSelectSecondQuestion() {
     this.setState({firstQuestion: false, secondQuestion: true, showVirtualKeyboard: true })
@@ -28,18 +39,41 @@ export default class Register extends Component {
   }
 
   handleReturnKeyPress(value) {
-    if (value == 'ok' && this.state.value.length != 0) {
-      this.setState({ secondQuestion: false, thirdQuestion: true })
-    } else {
 
-      if (value == 'backspace') {
-        value = Array.from(this.state.value)
-        this.setState({value: value.pop()})
+    if (this.state.secondQuestion) {
+      if (value == 'ok' && this.state.value.length != 0) {
+        this.setState({ secondQuestion: false, thirdQuestion: true })
       } else {
-        value = this.state.value + value
-      } 
-    
-    this.setState({value : this.convertInputToCurrency(value.toString())})
+        if (value == 'backspace') {
+          value = Array.from(this.state.value)
+          this.setState({value: value.pop()})
+        } else {
+          value = this.state.value + value
+        }
+      
+      this.setState({value : this.convertInputToCurrency(value.toString())})
+      }
+    }
+
+    if (this.state.thirdQuestion) {
+      if (value == 'backspace') {
+        if (this.state.due1) this.setState({ due1: null })
+        if (!this.state.due1) this.setState({ due0: null })
+      } else {
+        console.log(this.lastDay)
+        this.setState({due: this.state.due + value})
+        if (parseInt(this.state.due) > this.lastDay.getDate()) {
+          this.setState({ due: null, due0: null, due1: null })
+        }
+
+        if (!this.state.due0) {
+          this.setState({ due0: value })
+        } else {
+          this.setState({ due1: this.state.due0 })
+          this.setState({ due0: value }) 
+        }
+      }
+
     }
   }
 
@@ -91,12 +125,13 @@ export default class Register extends Component {
           {this.state.thirdQuestion && 
             <View style={styles.valueArea}>
               <Text style={styles.labelValue}>VENCIMENTO</Text>
+              <Text>{this.state.due}</Text>
               <View style={styles.dataField}>
                 <View style={styles.dateFieldValue}>
-                  <Text style={styles.dateInputValue}></Text>
+                  <Text style={styles.dateInputValue}>{this.state.due1}</Text>
                 </View>
                 <View style={styles.dateFieldValue}>
-                  <Text style={styles.dateInputValue}></Text>
+                  <Text style={styles.dateInputValue}>{this.state.due0}</Text>
                 </View>
               </View>
             </View>
@@ -143,11 +178,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row'
   },
   dateFieldValue: {
+    justifyContent: 'center',
+    alignItems: 'center',
     height: 120,
     width: 80,
     margin: 10,
     borderRadius: 5,
-    backgroundColor: 'rgba(0, 0, 0, 0.1)'
+    backgroundColor: 'rgba(237, 237, 237, 0.3)'
   },
   dateInputValue: {
     fontSize: 64

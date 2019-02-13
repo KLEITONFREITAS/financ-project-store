@@ -3,6 +3,7 @@ import { Text, View, TextInput, TouchableWithoutFeedback, StyleSheet, Animated, 
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { backgroundColor, fontColor, label } from '../utils/shared'
 import Keyboard from '../components/Keyboard'
+import moment from 'moment'
 
 
 
@@ -14,11 +15,15 @@ export default class Register extends Component {
     firstQuestion: true,
     secondQuestion: false,
     thirdQuestion: false,
+    resume: false,
     showVirtualKeyboard: false,
+
     desc: '',
+    type: '',
     value: 0,
-    positionDesc: new Animated.Value(0),
-    due: 0,
+    due: '',
+    
+    dueDay: 0,
     due0: null,
     due1: null
     
@@ -31,17 +36,13 @@ export default class Register extends Component {
 
   handleSelectSecondQuestion() {
     this.setState({firstQuestion: false, secondQuestion: true, showVirtualKeyboard: true })
-    this.animationDescription()
-  }
-
-  animationDescription() {
-    Animated.timing(this.state.positionDesc, {toValue: 1, duration: 1000}).start()
+    
   }
 
   handleReturnKeyPress(value) {
 
-    if (this.state.secondQuestion) {
-      if (value == 'ok' && this.state.value.length != 0) {
+    if (this.state.secondQuestion) {  
+      if (value == 'ok') {
         this.setState({ secondQuestion: false, thirdQuestion: true })
       } else {
         if (value == 'backspace') {
@@ -50,25 +51,32 @@ export default class Register extends Component {
         } else {
           value = this.state.value + value
         }
-      
-      this.setState({value : this.convertInputToCurrency(value.toString())})
+        this.setState({value : this.convertInputToCurrency(value.toString())})
       }
     }
 
     if (this.state.thirdQuestion) {
+      if (value == 'ok') {
+        this.setState({ thirdQuestion: false, resume: true, showVirtualKeyboard: false })
+
+        let data = new Date()
+        data.setDate(this.state.dueDay)
+        this.setState({ due: data })
+      }
+
       if (value == 'backspace') {
         if (this.state.due1) this.setState({ due1: null })
         if (!this.state.due1) this.setState({ due0: null })
       } else {
         if (this.state.due0 && this.state.due1) {
-          this.setState({ due: null, due0: null, due1: null })
+          this.setState({ dueDay: null, due0: null, due1: null })
         } else {
           if (!this.state.due0) {
-            this.setState({ due0: value, due: this.state.due0 })
+            this.setState({ due0: value, dueDay: this.state.due0 })
           } else {
-            this.setState({ due1: this.state.due0, due0: value, due : this.state.due0 + '' + value }, () => {
-              if (parseInt(this.state.due) > this.lastDay.getDate()) {
-                this.setState({ due: null, due0: null, due1: null })
+            this.setState({ due1: this.state.due0, due0: value, dueDay : this.state.due0 + '' + value }, () => {
+              if (parseInt(this.state.dueDay) > this.lastDay.getDate()) {
+                this.setState({ dueDay: null, due0: null, due1: null })
                 ToastAndroid.show('Data invalida', ToastAndroid.SHORT)
               }
             })
@@ -90,7 +98,6 @@ export default class Register extends Component {
         value.splice(value.length - 2, 0, ",")  
       }
     }
-
     return value.join('')
   }
 
@@ -123,10 +130,11 @@ export default class Register extends Component {
             </View>
           }
 
+          {/* Terceira questão */}
+          
           {this.state.thirdQuestion && 
             <View style={styles.valueArea}>
               <Text style={styles.labelValue}>VENCIMENTO</Text>
-              <Text>{this.state.due}</Text>
               <View style={styles.dataField}>
                 <View style={styles.dateFieldValue}>
                   <Text style={styles.dateInputValue}>{this.state.due1}</Text>
@@ -135,6 +143,14 @@ export default class Register extends Component {
                   <Text style={styles.dateInputValue}>{this.state.due0}</Text>
                 </View>
               </View>
+            </View>
+          }
+
+          {this.state.resume && 
+            <View>
+              <Text>{this.state.desc}</Text>
+              <Text>{this.state.value}</Text>
+              <Text>{moment(this.state.due).format("MMMM D, YYYY")}</Text>
             </View>
           }
 

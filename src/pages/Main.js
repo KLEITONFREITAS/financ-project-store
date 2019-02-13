@@ -63,7 +63,7 @@ export default class Main extends Component {
     return new Promise(resolve => {
       Animated.parallel([
         Animated.timing(this.state.widthButton, { toValue: 350, duration: 500}).start(),
-        Animated.timing(this.state.logoPositionTop, { toValue: 30, duration: 500}).start(),
+        Animated.timing(this.state.logoPositionTop, { toValue: 30, duration: 500 }).start(),
         Animated.timing(this.state.fontSizeLogo, { toValue: 24, duration: 500 }).start(),
         Animated.timing(this.state.hidden, { toValue: 0, duration: 200}).start(data => data.finished && resolve(true))
       ])

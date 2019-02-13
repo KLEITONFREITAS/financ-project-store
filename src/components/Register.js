@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Text, View, TextInput, TouchableWithoutFeedback, StyleSheet, Animated } from 'react-native'
+import { Text, View, TextInput, TouchableWithoutFeedback, StyleSheet, Animated, ToastAndroid } from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { backgroundColor, fontColor, label } from '../utils/shared'
 import Keyboard from '../components/Keyboard'
@@ -18,7 +18,7 @@ export default class Register extends Component {
     desc: '',
     value: 0,
     positionDesc: new Animated.Value(0),
-    due: '',
+    due: 0,
     due0: null,
     due1: null
     
@@ -60,20 +60,21 @@ export default class Register extends Component {
         if (this.state.due1) this.setState({ due1: null })
         if (!this.state.due1) this.setState({ due0: null })
       } else {
-        console.log(this.lastDay)
-        this.setState({due: this.state.due + value})
-        if (parseInt(this.state.due) > this.lastDay.getDate()) {
+        if (this.state.due0 && this.state.due1) {
           this.setState({ due: null, due0: null, due1: null })
-        }
-
-        if (!this.state.due0) {
-          this.setState({ due0: value })
         } else {
-          this.setState({ due1: this.state.due0 })
-          this.setState({ due0: value }) 
+          if (!this.state.due0) {
+            this.setState({ due0: value, due: this.state.due0 })
+          } else {
+            this.setState({ due1: this.state.due0, due0: value, due : this.state.due0 + '' + value }, () => {
+              if (parseInt(this.state.due) > this.lastDay.getDate()) {
+                this.setState({ due: null, due0: null, due1: null })
+                ToastAndroid.show('Data invalida', ToastAndroid.SHORT)
+              }
+            })
+          }
         }
       }
-
     }
   }
 
@@ -105,7 +106,7 @@ export default class Register extends Component {
           <View style={styles.firstQuestion}>
             <Text style={styles.labelDesc}>{label.desc}</Text> 
             <TextInput style={styles.input} 
-              placeholder={'descrição'} 
+              // placeholder={'descrição'} 
               value={this.state.desc}
               autoFocus={true}
               onChangeText={desc => this.setState({ desc })}>
@@ -191,8 +192,8 @@ const styles = StyleSheet.create({
   },
   input: {
     marginTop: 30,
-    textAlign: 'center',
-    fontSize: 22,
+    // textAlign: 'center',
+    fontSize: 32,
     fontFamily: 'sans-serif-light',
   },
   buttonNext: {

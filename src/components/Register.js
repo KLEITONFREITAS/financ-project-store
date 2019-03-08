@@ -6,7 +6,6 @@ import Keyboard from '../components/Keyboard'
 import moment from 'moment'
 
 
-
 export default class Register extends Component {
 
   lastDay = null
@@ -30,6 +29,7 @@ export default class Register extends Component {
   }
 
   componentDidMount() {
+    this.setState({ type: this.props.type })
     const today = new Date()
     this.lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0)
   }  
@@ -41,7 +41,7 @@ export default class Register extends Component {
 
   handleReturnKeyPress(value) {
 
-    if (this.state.secondQuestion) {  
+    if (this.state.secondQuestion) {
       if (value == 'ok') {
         this.setState({ secondQuestion: false, thirdQuestion: true })
       } else {
@@ -111,11 +111,11 @@ export default class Register extends Component {
 
           {this.state.firstQuestion &&
           <View style={styles.firstQuestion}>
-            <Text style={styles.labelDesc}>{label.desc}</Text> 
+            <Text style={styles.labelDesc}>{this.state.type}</Text> 
             <TextInput style={styles.input} 
-              // placeholder={'descrição'} 
+              placeholder={'Descrição'}
+              placeholderTextColor={'rgba(237, 237, 237, 0.8)'}
               value={this.state.desc}
-              autoFocus={true}
               onChangeText={desc => this.setState({ desc })}>
             </TextInput>
           </View>
@@ -147,10 +147,11 @@ export default class Register extends Component {
           }
 
           {this.state.resume && 
-            <View>
-              <Text>{this.state.desc}</Text>
-              <Text>{this.state.value}</Text>
-              <Text>{moment(this.state.due).format("MMMM D, YYYY")}</Text>
+            <View style={styles.resume}>
+              <Text style={styles.title}>Resumo</Text>
+              <Text style={styles.ResumeDesc}>{this.state.desc}</Text>
+              <Text style={styles.ResumeValue}>${this.state.value}</Text>
+              <Text style={styles.ResumeDue}>{moment(this.state.due).format("MMMM D, YYYY")}</Text>
             </View>
           }
 
@@ -208,8 +209,8 @@ const styles = StyleSheet.create({
   },
   input: {
     marginTop: 30,
-    // textAlign: 'center',
-    fontSize: 32,
+    // color: 'rgb(237, 237, 237)',
+    fontSize: 64,
     fontFamily: 'sans-serif-light',
   },
   buttonNext: {
@@ -247,5 +248,32 @@ const styles = StyleSheet.create({
   },
   currency: {
     fontSize: 32
+  },
+
+
+// tela de resume
+
+  resume: {
+    position: 'absolute',
+    justifyContent: 'center',
+    width: '90%',
+    height: '100%',
+    margin: 20,
+  },
+  ResumeDesc: {
+    fontWeight: 'bold',
+    fontSize: 64,
+    marginBottom: 10
+  },
+  ResumeValue: {
+    fontWeight: 'bold',
+    fontSize: 64,
+    marginBottom: 10
+  },
+  ResumeDue: {
+    fontWeight: 'bold',
+    fontSize: 64,
+    marginBottom: 10
   }
+
 })

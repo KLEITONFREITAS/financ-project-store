@@ -16,6 +16,7 @@ export default class Main extends Component {
     logoPositionTop: new Animated.Value(280),
     hidden: new Animated.Value(1),
     show: new Animated.Value(0),
+    showHeader: new Animated.Value(0),
     
     widthButton: new Animated.Value(140),
     
@@ -26,7 +27,9 @@ export default class Main extends Component {
     showBuyOption: new Animated.Value(0),
     showBillOption: new Animated.Value(0),
     showRevenueOption: new Animated.Value(0),
-      
+    
+    colorHeader: "dark-content",
+
     enableHome: true,
     enableList: false,
     enableRegister: false,
@@ -51,12 +54,14 @@ export default class Main extends Component {
       Animated.timing(this.state.logoPositionTop, { toValue: 280, duration: 500}).start(),
       Animated.timing(this.state.hidden, { toValue: 1, duration: 500}).start(),
       Animated.timing(this.state.show, { toValue: 0, duration: 100}).start(),
+      Animated.timing(this.state.showHeader, {toValue: 0, duration: 200}).start(),
     ])
     this.animationCloseOptions()
     this.setState({ enableList: false })
     this.setState({ enableRegister: false })
     this.setState({ enableOptions: false })
     this.setState({ enableHome: true })
+    this.setState({ colorHeader: "dark-content" })
   }
 
   _hiddenButton() {
@@ -65,8 +70,10 @@ export default class Main extends Component {
         Animated.timing(this.state.widthButton, { toValue: 350, duration: 500}).start(),
         Animated.timing(this.state.logoPositionTop, { toValue: 30, duration: 500 }).start(),
         Animated.timing(this.state.fontSizeLogo, { toValue: 24, duration: 500 }).start(),
-        Animated.timing(this.state.hidden, { toValue: 0, duration: 200}).start(data => data.finished && resolve(true))
+        Animated.timing(this.state.hidden, { toValue: 0, duration: 200}).start(data => {data.finished && resolve(true)}),
+        Animated.timing(this.state.showHeader, {toValue: 1, duration: 200}).start()
       ])
+      this.setState({ colorHeader: "light-content" })
     })
   }
 
@@ -120,9 +127,13 @@ export default class Main extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <StatusBar translucent={true} backgroundColor={'transparent'} barStyle="dark-content" />
+        <StatusBar translucent={true} backgroundColor={'transparent'} barStyle={this.state.colorHeader} />
 
-        <Animated.Text style={[styles.logo, { fontSize: this.state.fontSizeLogo, top: this.state.logoPositionTop }]}>store.</Animated.Text>
+        <Animated.Text style={[styles.logo, { opacity: this.state.hidden }]}>store.</Animated.Text>
+
+        <Animated.View style={[styles.header, { opacity: this.state.showHeader } ]}>
+          <Text style={styles.logoHeader}>.store</Text>
+        </Animated.View>
 
         {this.state.enableHome && <Home 
           widthButton={this.state.widthButton}
@@ -178,12 +189,24 @@ const styles = StyleSheet.create({
   },
   logo: {
     position: 'absolute',
+    top: 280,
     color: fontColor,
     fontSize: 36,
     fontFamily: 'sans-serif-light'
   },
-  
-
+  header: {
+    position: 'absolute',
+    paddingBottom: 20,
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    top: 0,
+    width: '100%',
+    height: 100,
+    backgroundColor: '#000',
+  },
+  logoHeader: {
+    color: '#fff'
+  },
 // styles da lista de registros
   financArea: {
     flex: 1,
